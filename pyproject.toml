@@ -1,0 +1,20 @@
+[project]
+name = "llm-wiki-pro2"
+version = "0.0.2"
+description = "Personal knowledge base built on the LLM-wiki pattern (Karpathy)"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Lewsiafat" }]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "httpx>=0.27",
+    "python-dotenv>=1.0",
+    "mcp>=1.9",
+]
+
+[project.urls]
+Homepage = "https://github.com/Lewsiafat/llm-wiki-pro2"
+Repository = "https://github.com/Lewsiafat/llm-wiki-pro2"

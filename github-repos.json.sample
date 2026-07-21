@@ -1,0 +1,16 @@
+{
+  "owner": "your-github-username",
+  "standard_repos": [
+    "my-project",
+    "another-project"
+  ],
+  "full_tree_repos": [
+    "research-notes"
+  ],
+  "html_repos": [
+    "course-site"
+  ],
+  "excluded_repos": [
+    "private-scratchpad"
+  ]
+}
