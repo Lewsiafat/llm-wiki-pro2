@@ -20,12 +20,18 @@ from app import engine, github, mcp_server  # noqa: E402
 
 BASE_PATH = os.getenv("BASE_PATH", "")  # e.g. "/llm-wiki-pro2" behind nginx, "" locally
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
-APP_VERSION = "0.0.2"
+APP_VERSION = "0.0.3"
 
 # Opt-in bearer-token gate for the REST API (the frontend page itself and its
 # static assets stay reachable so the login prompt can render). Unset =
 # fully open, same as before. Independent from MCP's own MCP_API_KEY gate.
 API_TOKEN = os.getenv("API_TOKEN", "").strip()
+
+# Demo-only kill switch: blocks the LLM-calling endpoints (ingest/query/lint/
+# github sync) so a public, unauthenticated demo instance can't burn
+# OpenRouter credit. Browsing the already-ingested wiki (GET endpoints)
+# still works. Off unless DEMO_DISABLE_LLM is explicitly set.
+DEMO_DISABLE_LLM = os.getenv("DEMO_DISABLE_LLM", "").strip().lower() in ("1", "true", "yes")
 
 
 def require_token(authorization: str | None = Header(default=None)):
@@ -35,6 +41,11 @@ def require_token(authorization: str | None = Header(default=None)):
         authorization.removeprefix("Bearer "), API_TOKEN
     ):
         raise HTTPException(401, "unauthorized")
+
+
+def require_llm_enabled():
+    if DEMO_DISABLE_LLM:
+        raise HTTPException(403, "demo instance: this feature is disabled to avoid burning API credit")
 
 engine.init_data()
 
@@ -104,7 +115,7 @@ def api_delete_source(sid: str):
         raise HTTPException(404, f"source {sid} not found")
 
 
-@api_router.post("/api/sources/{sid}/ingest")
+@api_router.post("/api/sources/{sid}/ingest", dependencies=[Depends(require_llm_enabled)])
 def api_ingest(sid: str):
     try:
         return engine.ingest(sid)
@@ -136,7 +147,7 @@ def api_wiki_history(limit: int = 50):
 
 # ---- operations ----
 
-@api_router.post("/api/query")
+@api_router.post("/api/query", dependencies=[Depends(require_llm_enabled)])
 def api_query(body: QueryIn):
     if not body.question.strip():
         raise HTTPException(400, "question is required")
@@ -146,7 +157,7 @@ def api_query(body: QueryIn):
         raise HTTPException(502, str(e))
 
 
-@api_router.post("/api/lint")
+@api_router.post("/api/lint", dependencies=[Depends(require_llm_enabled)])
 def api_lint():
     try:
         return engine.lint()
@@ -154,7 +165,7 @@ def api_lint():
         raise HTTPException(502, str(e))
 
 
-@api_router.post("/api/github/sync")
+@api_router.post("/api/github/sync", dependencies=[Depends(require_llm_enabled)])
 def api_github_sync(body: GithubSyncIn):
     try:
         return github.sync(repos=body.repos, force=body.force)

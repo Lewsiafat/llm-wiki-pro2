@@ -83,6 +83,14 @@ GET        /api/health
 
 無 CI／自動部署：SSH 到伺服器手動 `git pull` → `pip install -r requirements.txt` → 重啟 systemd service。通用 self-host 步驟（venv、systemd unit、nginx 反代範例）見 README 的 Deployment 章節；反代情境下 `BASE_PATH` 要與 nginx 的 subpath 一致、`MCP_ALLOWED_HOSTS` 要含公開域名。
 
+### Demo 實例（公開、唯讀，2026-07-26 建立）
+
+`/srv/projects/llm-wiki-pro2-demo/`（port 10036，`https://lewsi.ddns.net/llm-wiki-pro2-demo/`）是**獨立於正式站的 standalone clone**，不跟這個 repo 的部署綁在一起，需要另外手動同步。用途是公開、免登入分享，讓人瀏覽已匯入的 wiki 內容，不需要正式站的存取權限。
+
+- **`DEMO_DISABLE_LLM` kill switch**（`app/main.py`）：設為 `1`/`true`/`yes` 時，`require_llm_enabled()` dependency 會讓 `POST /api/sources/{id}/ingest`、`POST /api/query`、`POST /api/lint`、`POST /api/github/sync` 一律回 403（`"demo instance: this feature is disabled to avoid burning API credit"`），避免公開實例被打爆 OpenRouter 額度。`POST /api/sources`（純新增，不觸發 LLM）與所有 GET／瀏覽端點（`wiki/tree`、`wiki/page`、`wiki/history`、`sources` 列表／單筆）不受影響，正常可用。與 `API_TOKEN`／`MCP_API_KEY` 完全獨立的第三個開關，只透過 `.env` 的 `DEMO_DISABLE_LLM` 控制。
+- Demo 實例目前 `.env` 已設 `DEMO_DISABLE_LLM=true`；驗證時發現**這個沙盒容器對外的 OneCLI proxy 會把上游 401/403 回應改寫成自己的 `credential_not_found` 格式**，在容器內 curl 公開 URL 看到的 403 body 會很誤導——要驗證真正的 app 回應，得 SSH 到 VPS 直接 curl `127.0.0.1:10036`（繞過容器的 outer proxy）才看得到正確內容。
+- 若要重新從 GitHub clone 出新的 demo 實例，`DEMO_DISABLE_LLM` 的程式碼變更已經回寫進這個 repo（不是只存在於 VPS 上的手改），照一般部署流程 clone＋設 `.env` 即可，不用再手動補 patch。
+
 ## 已知眉角
 
 - 部署用 `python3 -m venv` + `requirements.txt`（伺服器上沒有 `uv`）；`pyproject.toml` 保留給未來改用 uv。

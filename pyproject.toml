@@ -1,6 +1,6 @@
 [project]
 name = "llm-wiki-pro2"
-version = "0.0.2"
+version = "0.0.3"
 description = "Personal knowledge base built on the LLM-wiki pattern (Karpathy)"
 readme = "README.md"
 license = "MIT"

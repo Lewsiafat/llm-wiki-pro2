@@ -1,10 +1,10 @@
 # llm-wiki-pro2
 
-> 個人知識庫：LLM 不做即時 RAG，而是持續建立並維護一座 markdown wiki，知識隨來源累積而複利成長。
-
 A personal knowledge base implementing Andrej Karpathy's **"LLM Wiki"** pattern: instead of retrieval-at-query-time (RAG), the LLM continuously builds and maintains a markdown wiki. Every new source compounds — summaries, cross-source topic pages, and an index the LLM keeps coherent over time.
 
 Self-hosted: run it locally or behind your own reverse proxy (see [Deployment](#deployment)).
+
+**Live demo:** [https://lewsi.ddns.net/llm-wiki-pro2-demo/](https://lewsi.ddns.net/llm-wiki-pro2-demo/) — browse an already-populated wiki. It's public and unauthenticated, so the LLM-calling endpoints (ingest / query / lint / GitHub sync) are disabled there via `DEMO_DISABLE_LLM` (see the env var table below) to avoid burning API credit; everything read-only still works.
 
 ## The three-layer architecture
 
@@ -65,6 +65,7 @@ Open `http://127.0.0.1:8777/`. (A `pyproject.toml` is included if you prefer `uv
 | `MCP_ALLOWED_HOSTS` / `MCP_ALLOWED_ORIGINS` | comma-separated hosts/origins `/mcp` accepts (default: localhost only — set your public host when behind a proxy) |
 | `API_TOKEN` | optional bearer token for `/api/*`; if unset the REST API stays open |
 | `GITHUB_TOKEN` | optional — only for the GitHub sync connector (see below) |
+| `DEMO_DISABLE_LLM` | optional — set `1`/`true`/`yes` to 403 the LLM-calling endpoints (ingest/query/lint/github-sync) while leaving GET/browse endpoints working; for public read-only demo instances |
 
 ## API
 
