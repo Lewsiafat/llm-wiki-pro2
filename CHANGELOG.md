@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `SECURITY.md` — how to report vulnerabilities privately, plus the intended
+  security model
+- `CONTRIBUTING.md` — development setup, testing expectations, versioning notes
+
+### Removed
+- `CLAUDE.md` is no longer tracked (local AI-assistant notes, kept out of the
+  public repo)
+
 ## [0.0.3] - 2026-07-26
 
 ### Added

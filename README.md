@@ -170,3 +170,13 @@ location /llm-wiki-pro2/ {
 Set `BASE_PATH=/llm-wiki-pro2` to match the subpath (leave empty when serving at the domain root), and remember `MCP_ALLOWED_HOSTS` if you use `/mcp`.
 
 **4. Updating:** `git pull && .venv/bin/pip install -r requirements.txt && sudo systemctl restart llm-wiki-pro2`.
+
+## Contributing & security
+
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). To report a
+vulnerability, please follow [SECURITY.md](SECURITY.md) instead of opening a
+public issue.
+
+## License
+
+[MIT](LICENSE)

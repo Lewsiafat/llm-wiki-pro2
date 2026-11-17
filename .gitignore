@@ -5,3 +5,8 @@ __pycache__/
 data/
 temp/
 .claude.local.md
+
+# Local-only notes and agent context (not part of the public repo)
+CLAUDE.md
+CONTEXT.md
+docs/
